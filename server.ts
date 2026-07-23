@@ -286,31 +286,31 @@ app.post('/api/sheets/test', async (req, res) => {
   }
 });
 
-// Verify Google Token or Auth handler
-app.post('/api/auth/google', (req, res) => {
-  const { credential, email } = req.body;
-  // In Google Identity Services, user email or payload can be passed
+// Secure Admin Authentication handler
+app.post('/api/auth/login', (req, res) => {
+  const { email, password } = req.body;
   const targetEmail = (email || '').toLowerCase().trim();
-  
-  if (targetEmail === 'dinhanh1994@gmail.com') {
+  const targetPassword = (password || '').trim();
+
+  // Read credentials from environment variables, fallback to defaults if not provided
+  const EXPECTED_EMAIL = (process.env.ADMIN_EMAIL || 'dinhanh1994@gmail.com').toLowerCase().trim();
+  const EXPECTED_PASS = (process.env.ADMIN_PASSWORD || '1Lanyeuvanlandau?ctrlc').trim();
+
+  if (targetEmail === EXPECTED_EMAIL && targetPassword === EXPECTED_PASS) {
     return res.json({
       success: true,
       user: {
-        email: 'dinhanh1994@gmail.com',
+        email: EXPECTED_EMAIL,
         name: 'Định Anh (Admin)',
-        picture: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC27zJOFA5pjQdQ1gCy2hAGdnJLyRoSeYNuBVt7GPdFoyIj8QG7dAkJh7z5RDZX4kF1ZiLjX2sOUcsOEey0Eq-Xm9aXdmko0JNdM0U6afWGa4Nir6esMdLkL75R-xwG7e2J4ufvCVP57oxtoJrhNB8g5GVqdo-g6zOVo0M5iwR7gPztGaB_PPcsoYlxUEvZu9m1O-gxg0x3TsSrmXirVflEfiX6znX0eJZ_zk9WWN2Q4HrV7CGiPDrWd8E6_z7pBUz3RkLlN7vJQNo=s64',
+        picture:
+          'https://lh3.googleusercontent.com/aida-public/AB6AXuC27zJOFA5pjQdQ1gCy2hAGdnJLyRoSeYNuBVt7GPdFoyIj8QG7dAkJh7z5RDZX4kF1ZiLjX2sOUcsOEey0Eq-Xm9aXdmko0JNdM0U6afWGa4Nir6esMdLkL75R-xwG7e2J4ufvCVP57oxtoJrhNB8g5GVqdo-g6zOVo0M5iwR7gPztGaB_PPcsoYlxUEvZu9m1O-gxg0x3TsSrmXirVflEfiX6znX0eJZ_zk9WWN2Q4HrV7CGiPDrWd8E6_z7pBUz3RkLlN7vJQNo=s64',
         isAdmin: true,
       },
     });
   } else {
-    return res.status(403).json({
+    return res.status(401).json({
       success: false,
-      error: 'Quyền truy cập bị từ chối: Chỉ tài khoản dinhanh1994@gmail.com mới có quyền quản trị.',
-      user: {
-        email: targetEmail,
-        name: 'Khách hàng / User',
-        isAdmin: false,
-      },
+      error: 'Tài khoản hoặc mật khẩu không chính xác! Vui lòng kiểm tra lại.',
     });
   }
 });
