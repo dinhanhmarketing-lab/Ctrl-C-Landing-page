@@ -39,9 +39,8 @@ export const Hero: React.FC<HeroProps> = ({
 
         {/* Display Headline - Reduced size and placed lower */}
         <h1 className="font-headline-lg text-3xl sm:text-4xl md:text-5xl uppercase leading-tight mb-4 text-white tracking-tight drop-shadow-lg font-bold">
-          {heroData.headlinePart1}{' '}
           <span style={{ color: primaryColor }} className="text-[#ffb800]">
-            {heroData.headlinePart2}
+            {heroData.headlinePart1} {heroData.headlinePart2}
           </span>{' '}
           {heroData.headlinePart3}
         </h1>
