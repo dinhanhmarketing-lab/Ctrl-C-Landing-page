@@ -14,7 +14,7 @@ export const defaultConfig: AppConfig = {
     headlinePart3: 'IS THE NEW END.',
     subText: 'A cyber-brutalist descent into the architecture of consciousness. In a world of digital replication, the original is the most dangerous artifact.',
     bgImage: 'https://lh3.googleusercontent.com/aida/AP1WRLvvubOhSTNL-h9xGJV8hUOlWbrtfdvbyRbb8DFJ8YtRhRg4WnLpyYywsHTWkwsd-2gCyoTFI1oGDsnHtzo3df1ps-FAcpiiQENI4oJ7oYpozEtQXgkjSYM7QIqzD9AdZ3L7sCh9oaBc0wBdHLbk5eHM2ocRW-uRLgu-egHwxmM93l-SPio8VUFf7SA9jwNaNeSIbaOvosVp8bRexKFZil8qgzss15e92gch-4tnhp7mqotJEOpdKW-dAA',
-    button1Text: 'SECURE ACCESS',
+    button1Text: 'MUA NGAY',
     button2Text: 'CHAPTER_01',
   },
 

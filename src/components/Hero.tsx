@@ -5,14 +5,13 @@ interface HeroProps {
   heroData: AppConfig['hero'];
   primaryColor: string;
   onOpenOrder: () => void;
-  onOpenChapterModal: () => void;
+  onOpenChapterModal?: () => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
   heroData,
   primaryColor,
   onOpenOrder,
-  onOpenChapterModal,
 }) => {
   return (
     <section className="relative min-h-[85vh] md:min-h-[90vh] flex flex-col justify-end overflow-hidden border-b-2 border-[#514532] bg-[#131313]">
@@ -50,20 +49,14 @@ export const Hero: React.FC<HeroProps> = ({
           {heroData.subText}
         </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-md">
+        {/* CTA Button */}
+        <div className="flex justify-center w-full max-w-xs">
           <button
             onClick={onOpenOrder}
             style={{ backgroundColor: primaryColor }}
-            className="bg-[#ffb800] text-black font-label-mono px-8 py-3.5 font-bold text-sm tracking-wide uppercase brutalist-border hover:bg-white hover:text-black transition-all text-center border-2 border-black active:scale-98 cursor-pointer shadow-lg"
+            className="w-full bg-[#ffb800] text-black font-label-mono px-8 py-4 font-bold text-base tracking-wider uppercase brutalist-border hover:bg-white hover:text-black transition-all text-center border-2 border-black active:scale-98 cursor-pointer shadow-xl"
           >
-            {heroData.button1Text}
-          </button>
-          <button
-            onClick={onOpenChapterModal}
-            className="border-2 border-white text-white font-label-mono px-8 py-3.5 font-bold text-sm tracking-wide uppercase hover:bg-white hover:text-black transition-all text-center backdrop-blur-md active:scale-98 cursor-pointer shadow-lg bg-black/30"
-          >
-            {heroData.button2Text}
+            {heroData.button1Text || 'MUA NGAY'}
           </button>
         </div>
       </div>
