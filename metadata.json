@@ -1,0 +1,6 @@
+{
+  "name": "CTRL C - Novel Landing Page",
+  "description": "Cyber Brutalist novel landing page with online order form, sample preview, customizable editor, and admin panel with Google Sign-In for dinhanh1994@gmail.com.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'SVN-Avant Garde Gothic';
+  src: local('SVN-Avant Garde Gothic'), local('SVN-AvantGarde'), local('SVN Avant Garde Gothic'), local('SVN Avant Garde'), local('ITC Avant Garde Gothic'), local('Avant Garde');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SVN-Avant Garde Gothic';
+  src: local('SVN-Avant Garde Gothic Bold'), local('SVN-AvantGarde-Bold'), local('SVN Avant Garde Gothic Bold'), local('SVN Avant Garde Bold'), local('ITC Avant Garde Gothic Bold'), local('Avant Garde Bold');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@layer base {
+  :root {
+    --primary-color: #ffb800;
+    --primary-light: #ffdca1;
+    --bg-dark: #131313;
+    --surface-dark: #20201f;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  *, ::before, ::after {
+    font-family: 'SVN-Avant Garde Gothic', 'SVN Avant Garde Gothic', 'SVN-AvantGarde', 'SVN Avant Garde', 'ITC Avant Garde Gothic', 'Avant Garde Gothic', 'Avant Garde', 'TeX Gyre Adventor', 'Century Gothic', 'Montserrat', sans-serif !important;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: #e5e2e1;
+    font-family: 'SVN-Avant Garde Gothic', 'SVN Avant Garde Gothic', 'SVN-AvantGarde', 'SVN Avant Garde', 'ITC Avant Garde Gothic', 'Avant Garde Gothic', 'Avant Garde', 'TeX Gyre Adventor', 'Century Gothic', 'Montserrat', sans-serif !important;
+  }
+
+  input, button, textarea, select {
+    font-family: 'SVN-Avant Garde Gothic', 'SVN Avant Garde Gothic', 'SVN-AvantGarde', 'SVN Avant Garde', 'ITC Avant Garde Gothic', 'Avant Garde Gothic', 'Avant Garde', 'TeX Gyre Adventor', 'Century Gothic', 'Montserrat', sans-serif !important;
+  }
+}
+
+.font-headline-lg, .font-display-xl, .font-label-mono, .font-body-md {
+  font-family: 'SVN-Avant Garde Gothic', 'SVN Avant Garde Gothic', 'SVN-AvantGarde', 'SVN Avant Garde', 'ITC Avant Garde Gothic', 'Avant Garde Gothic', 'Avant Garde', 'TeX Gyre Adventor', 'Century Gothic', 'Montserrat', sans-serif !important;
+}
+
+/* Brutalist Shadow Utilities */
+.brutalist-border {
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.brutalist-border-gold {
+  box-shadow: 4px 4px 0px 0px #ffb800;
+}
+
+.brutalist-border-white {
+  box-shadow: 4px 4px 0px 0px #ffffff;
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0px 0px #ffb800;
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #131313;
+}
+::-webkit-scrollbar-thumb {
+  background: #ffb800;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ffdca1;
+}
