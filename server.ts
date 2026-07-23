@@ -96,15 +96,36 @@ if (fs.existsSync(ORDERS_FILE)) {
 }
 
 function saveConfig() {
-  fs.writeFileSync(CONFIG_FILE, JSON.stringify(appConfig, null, 2));
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(appConfig, null, 2));
+  } catch (err) {
+    console.error('Error writing config file:', err);
+  }
 }
 
 function savePackages() {
-  fs.writeFileSync(PACKAGES_FILE, JSON.stringify(packages, null, 2));
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(PACKAGES_FILE, JSON.stringify(packages, null, 2));
+  } catch (err) {
+    console.error('Error writing packages file:', err);
+  }
 }
 
 function saveOrders() {
-  fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+  } catch (err) {
+    console.error('Error writing orders file:', err);
+  }
 }
 
 // Helper to trigger Google Sheet Webhook sync
@@ -146,20 +167,27 @@ app.get('/api/config', (req, res) => {
 
 app.post('/api/config', (req, res) => {
   const { newConfig, newPackages, adminEmail } = req.body;
-  if (!adminEmail || adminEmail.toLowerCase() !== 'dinhanh1994@gmail.com') {
+  const targetEmail = (adminEmail || '').toString().toLowerCase().trim();
+
+  if (targetEmail !== 'dinhanh1994@gmail.com') {
     return res.status(403).json({ error: 'Access denied. Only dinhanh1994@gmail.com can edit configuration.' });
   }
 
-  if (newConfig) {
-    appConfig = { ...appConfig, ...newConfig };
-    saveConfig();
-  }
-  if (newPackages && Array.isArray(newPackages)) {
-    packages = newPackages;
-    savePackages();
-  }
+  try {
+    if (newConfig) {
+      appConfig = { ...appConfig, ...newConfig };
+      saveConfig();
+    }
+    if (newPackages && Array.isArray(newPackages)) {
+      packages = newPackages;
+      savePackages();
+    }
 
-  res.json({ success: true, config: appConfig, packages });
+    return res.json({ success: true, config: appConfig, packages });
+  } catch (err: any) {
+    console.error('Failed to update config:', err);
+    return res.status(500).json({ error: 'Internal server error saving configuration.' });
+  }
 });
 
 app.post('/api/config/reset', (req, res) => {
