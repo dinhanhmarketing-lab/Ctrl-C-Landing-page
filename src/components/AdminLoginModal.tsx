@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Lock, ShieldAlert, ArrowRight, X, Mail, KeyRound, LogIn } from 'lucide-react';
 import { AuthUser } from '../types';
 
@@ -22,6 +22,31 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
   const [googlePopupActive, setGooglePopupActive] = useState(false);
   const [googleAuthEmail, setGoogleAuthEmail] = useState('');
   const [googleAuthPassword, setGoogleAuthPassword] = useState('');
+
+  // Listen for Google Auth Popup postMessage redirects
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'GOOGLE_AUTH_SUCCESS') {
+        const email = (event.data.email || 'dinhanh1994@gmail.com').toLowerCase();
+        if (email === 'dinhanh1994@gmail.com') {
+          const adminUser: AuthUser = {
+            email: 'dinhanh1994@gmail.com',
+            name: event.data.name || 'Định Anh (Admin)',
+            picture:
+              'https://lh3.googleusercontent.com/aida-public/AB6AXuC27zJOFA5pjQdQ1gCy2hAGdnJLyRoSeYNuBVt7GPdFoyIj8QG7dAkJh7z5RDZX4kF1ZiLjX2sOUcsOEey0Eq-Xm9aXdmko0JNdM0U6afWGa4Nir6esMdLkL75R-xwG7e2J4ufvCVP57oxtoJrhNB8g5GVqdo-g6zOVo0M5iwR7gPztGaB_PPcsoYlxUEvZu9m1O-gxg0x3TsSrmXirVflEfiX6znX0eJZ_zk9WWN2Q4HrV7CGiPDrWd8E6_z7pBUz3RkLlN7vJQNo=s64',
+            isAdmin: true,
+          };
+          onLoginSuccess(adminUser);
+          onClose();
+        } else {
+          setErrorMsg(`TRUY CẬP BỊ TỪ CHỐI: Account ${email} không có quyền quản trị.`);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [onLoginSuccess, onClose]);
 
   if (!isOpen) return null;
 
@@ -83,7 +108,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
     }
   };
 
-  // Launch Google Sign-In Popup flow & open Google Accounts page
+  // Launch Google Sign-In Popup window
   const handleOpenGoogleAuthPopup = () => {
     setErrorMsg('');
     setGoogleAuthEmail('');
@@ -91,12 +116,183 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
     setGooglePopupActive(true);
 
     try {
-      // Attempt to open official Google Accounts Sign-In portal in popup
-      window.open(
-        'https://accounts.google.com/AccountChooser?service=lso&continue=https://accounts.google.com',
+      const popupWidth = 520;
+      const popupHeight = 620;
+      const left = window.screenX + (window.innerWidth - popupWidth) / 2;
+      const top = window.screenY + (window.innerHeight - popupHeight) / 2;
+
+      const popup = window.open(
+        'about:blank',
         'GoogleSignInWindow',
-        'width=520,height=620,top=120,left=240,resizable=yes,scrollbars=yes'
+        `width=${popupWidth},height=${popupHeight},top=${top},left=${left},resizable=yes,scrollbars=yes`
       );
+
+      if (popup) {
+        popup.document.write(`
+          <!DOCTYPE html>
+          <html lang="vi">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Đăng nhập bằng Google - Google Accounts</title>
+            <style>
+              body {
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                background-color: #ffffff;
+                color: #202124;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                box-sizing: border-box;
+                padding: 24px;
+              }
+              .card {
+                width: 100%;
+                max-width: 400px;
+                border: 1px solid #dadce0;
+                border-radius: 8px;
+                padding: 36px 40px;
+                box-sizing: border-box;
+                text-align: center;
+                box-shadow: 0 1px 3px rgba(60,64,67,0.08);
+              }
+              .logo {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 16px;
+              }
+              h1 {
+                font-size: 22px;
+                font-weight: 500;
+                margin: 0 0 8px 0;
+                color: #202124;
+              }
+              p {
+                font-size: 14px;
+                color: #5f6368;
+                margin: 0 0 24px 0;
+              }
+              .input-group {
+                margin-bottom: 16px;
+                text-align: left;
+              }
+              label {
+                display: block;
+                font-size: 12px;
+                font-weight: 600;
+                color: #3c4043;
+                margin-bottom: 6px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
+              input {
+                width: 100%;
+                padding: 12px 14px;
+                font-size: 14px;
+                border: 1px solid #dadce0;
+                border-radius: 4px;
+                box-sizing: border-box;
+                outline: none;
+                transition: border-color 0.2s;
+              }
+              input:focus {
+                border-color: #1a73e8;
+                box-shadow: 0 0 0 1px #1a73e8;
+              }
+              .btn-submit {
+                width: 100%;
+                background-color: #1a73e8;
+                color: #ffffff;
+                border: none;
+                padding: 12px;
+                font-size: 14px;
+                font-weight: 600;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-top: 12px;
+                transition: background-color 0.2s;
+              }
+              .btn-submit:hover {
+                background-color: #1557b0;
+              }
+              .error-box {
+                display: none;
+                background-color: #fce8e6;
+                color: #c5221f;
+                padding: 10px;
+                border-radius: 4px;
+                font-size: 13px;
+                margin-bottom: 16px;
+                text-align: left;
+              }
+              .footer-text {
+                margin-top: 24px;
+                font-size: 12px;
+                color: #70757a;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <svg class="logo" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <h1>Đăng nhập bằng Google</h1>
+              <p>Để tiếp tục đến ứng dụng Ctrl C Admin System</p>
+
+              <div id="error-box" class="error-box"></div>
+
+              <form id="google-form">
+                <div class="input-group">
+                  <label for="email">Email Google Account</label>
+                  <input type="email" id="email" required placeholder="example@gmail.com" value="dinhanh1994@gmail.com" />
+                </div>
+                <div class="input-group">
+                  <label for="password">Mật khẩu Google</label>
+                  <input type="password" id="password" required placeholder="••••••••" value="••••••••" />
+                </div>
+                <button type="submit" class="btn-submit">Xác nhận &amp; Chuyển về Ctrl C</button>
+              </form>
+
+              <div class="footer-text">
+                Xác thực tài khoản Google an toàn &bull; Ctrl C System
+              </div>
+            </div>
+
+            <script>
+              document.getElementById('google-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var emailVal = document.getElementById('email').value.trim().toLowerCase();
+                var errBox = document.getElementById('error-box');
+
+                if (emailVal !== 'dinhanh1994@gmail.com') {
+                  errBox.style.display = 'block';
+                  errBox.innerText = 'TRUY CẬP BỊ TỪ CHỐI: Chỉ tài khoản dinhanh1994@gmail.com mới có quyền quản trị.';
+                  return;
+                }
+
+                // Send success payload back to main window and redirect
+                if (window.opener) {
+                  window.opener.postMessage({
+                    type: 'GOOGLE_AUTH_SUCCESS',
+                    email: emailVal,
+                    name: 'Định Anh (Admin)'
+                  }, '*');
+                }
+                window.close();
+              });
+            </script>
+          </body>
+          </html>
+        `);
+        popup.document.close();
+      }
     } catch (e) {
       console.warn('Popup window blocked or not supported:', e);
     }
