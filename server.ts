@@ -294,7 +294,7 @@ app.post('/api/auth/login', (req, res) => {
 
   // Read credentials from environment variables, fallback to defaults if not provided
   const EXPECTED_EMAIL = (process.env.ADMIN_EMAIL || 'dinhanh1994@gmail.com').toLowerCase().trim();
-  const EXPECTED_PASS = (process.env.ADMIN_PASSWORD || '1Lanyeuvanlandau?ctrlc').trim();
+  const EXPECTED_PASS = (process.env.ADMIN_PASSWORD || 'Dna13111994@ctrlc').trim();
 
   if (targetEmail === EXPECTED_EMAIL && targetPassword === EXPECTED_PASS) {
     return res.json({
