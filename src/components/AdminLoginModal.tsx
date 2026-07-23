@@ -108,16 +108,16 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
     }
   };
 
-  // Launch Google Sign-In Popup window
+  // Launch Google Sign-In Account Selector & Redirect Flow
   const handleOpenGoogleAuthPopup = () => {
     setErrorMsg('');
-    setGoogleAuthEmail('');
+    setGoogleAuthEmail('dinhanh1994@gmail.com');
     setGoogleAuthPassword('');
     setGooglePopupActive(true);
 
     try {
-      const popupWidth = 520;
-      const popupHeight = 620;
+      const popupWidth = 500;
+      const popupHeight = 600;
       const left = window.screenX + (window.innerWidth - popupWidth) / 2;
       const top = window.screenY + (window.innerHeight - popupHeight) / 2;
 
@@ -134,159 +134,180 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Đăng nhập bằng Google - Google Accounts</title>
+            <title>Xác thực Google Account - Ctrl C</title>
             <style>
               body {
                 margin: 0;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-                background-color: #ffffff;
+                background-color: #f8f9fa;
                 color: #202124;
                 display: flex;
-                flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 min-height: 100vh;
+                padding: 16px;
                 box-sizing: border-box;
-                padding: 24px;
               }
-              .card {
-                width: 100%;
-                max-width: 400px;
+              .box {
+                background: #ffffff;
                 border: 1px solid #dadce0;
                 border-radius: 8px;
-                padding: 36px 40px;
-                box-sizing: border-box;
+                width: 100%;
+                max-width: 420px;
+                padding: 32px 36px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.08);
                 text-align: center;
-                box-shadow: 0 1px 3px rgba(60,64,67,0.08);
               }
               .logo {
-                width: 48px;
-                height: 48px;
-                margin-bottom: 16px;
+                width: 44px;
+                height: 44px;
+                margin-bottom: 12px;
               }
-              h1 {
-                font-size: 22px;
+              h2 {
+                font-size: 20px;
                 font-weight: 500;
-                margin: 0 0 8px 0;
-                color: #202124;
+                margin: 0 0 6px 0;
               }
               p {
-                font-size: 14px;
+                font-size: 13px;
                 color: #5f6368;
                 margin: 0 0 24px 0;
               }
-              .input-group {
+              .account-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                border: 1px solid #dadce0;
+                border-radius: 8px;
+                cursor: pointer;
+                margin-bottom: 12px;
+                transition: background-color 0.15s, border-color 0.15s;
+                text-align: left;
+              }
+              .account-item:hover {
+                background-color: #f1f3f4;
+                border-color: #1a73e8;
+              }
+              .avatar {
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                background-color: #1a73e8;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                font-size: 16px;
+                margin-right: 14px;
+              }
+              .acc-info {
+                flex: 1;
+              }
+              .acc-name {
+                font-size: 14px;
+                font-weight: 600;
+                color: #202124;
+              }
+              .acc-email {
+                font-size: 12px;
+                color: #5f6368;
+              }
+              .badge {
+                font-size: 10px;
+                background-color: #e8f0fe;
+                color: #1a73e8;
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-weight: 600;
+              }
+              .err {
+                display: none;
+                background: #fce8e6;
+                color: #c5221f;
+                padding: 10px 12px;
+                border-radius: 6px;
+                font-size: 12px;
                 margin-bottom: 16px;
                 text-align: left;
               }
-              label {
-                display: block;
-                font-size: 12px;
-                font-weight: 600;
-                color: #3c4043;
-                margin-bottom: 6px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-              }
-              input {
+              .custom-input {
                 width: 100%;
-                padding: 12px 14px;
-                font-size: 14px;
+                padding: 10px 12px;
+                font-size: 13px;
                 border: 1px solid #dadce0;
                 border-radius: 4px;
                 box-sizing: border-box;
-                outline: none;
-                transition: border-color 0.2s;
+                margin-bottom: 10px;
               }
-              input:focus {
-                border-color: #1a73e8;
-                box-shadow: 0 0 0 1px #1a73e8;
-              }
-              .btn-submit {
+              .btn-login {
                 width: 100%;
-                background-color: #1a73e8;
-                color: #ffffff;
+                background: #1a73e8;
+                color: white;
                 border: none;
-                padding: 12px;
-                font-size: 14px;
-                font-weight: 600;
-                border-radius: 4px;
-                cursor: pointer;
-                margin-top: 12px;
-                transition: background-color 0.2s;
-              }
-              .btn-submit:hover {
-                background-color: #1557b0;
-              }
-              .error-box {
-                display: none;
-                background-color: #fce8e6;
-                color: #c5221f;
                 padding: 10px;
                 border-radius: 4px;
-                font-size: 13px;
-                margin-bottom: 16px;
-                text-align: left;
-              }
-              .footer-text {
-                margin-top: 24px;
-                font-size: 12px;
-                color: #70757a;
+                font-weight: 600;
+                cursor: pointer;
               }
             </style>
           </head>
           <body>
-            <div class="card">
+            <div class="box">
               <svg class="logo" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
               </svg>
-              <h1>Đăng nhập bằng Google</h1>
-              <p>Để tiếp tục đến ứng dụng Ctrl C Admin System</p>
+              <h2>Đăng nhập bằng Google</h2>
+              <p>Chọn tài khoản để quay về ứng dụng Ctrl C</p>
 
-              <div id="error-box" class="error-box"></div>
+              <div id="err" class="err"></div>
 
-              <form id="google-form">
-                <div class="input-group">
-                  <label for="email">Email Google Account</label>
-                  <input type="email" id="email" required placeholder="example@gmail.com" value="dinhanh1994@gmail.com" />
+              <div class="account-item" onclick="selectAccount('dinhanh1994@gmail.com')">
+                <div class="avatar">Đ</div>
+                <div class="acc-info">
+                  <div class="acc-name">Định Anh</div>
+                  <div class="acc-email">dinhanh1994@gmail.com</div>
                 </div>
-                <div class="input-group">
-                  <label for="password">Mật khẩu Google</label>
-                  <input type="password" id="password" required placeholder="••••••••" value="••••••••" />
-                </div>
-                <button type="submit" class="btn-submit">Xác nhận &amp; Chuyển về Ctrl C</button>
-              </form>
+                <span class="badge">ADMIN</span>
+              </div>
 
-              <div class="footer-text">
-                Xác thực tài khoản Google an toàn &bull; Ctrl C System
+              <div style="margin-top: 16px; text-align: left; border-t: 1px solid #eee; pt: 12px;">
+                <label style="font-size: 11px; font-weight: 600; color: #5f6368; display: block; margin-bottom: 4px;">SỬ DỤNG TÀI KHOẢN GOOGLE KHÁC:</label>
+                <input type="email" id="otherEmail" class="custom-input" placeholder="Nhập email Google..." />
+                <button type="button" class="btn-login" onclick="submitOther()">Đăng nhập &amp; Chuyển hướng</button>
               </div>
             </div>
 
             <script>
-              document.getElementById('google-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                var emailVal = document.getElementById('email').value.trim().toLowerCase();
-                var errBox = document.getElementById('error-box');
-
-                if (emailVal !== 'dinhanh1994@gmail.com') {
-                  errBox.style.display = 'block';
-                  errBox.innerText = 'TRUY CẬP BỊ TỪ CHỐI: Chỉ tài khoản dinhanh1994@gmail.com mới có quyền quản trị.';
-                  return;
-                }
-
-                // Send success payload back to main window and redirect
+              function selectAccount(email) {
                 if (window.opener) {
                   window.opener.postMessage({
                     type: 'GOOGLE_AUTH_SUCCESS',
-                    email: emailVal,
+                    email: email,
                     name: 'Định Anh (Admin)'
                   }, '*');
                 }
                 window.close();
-              });
+              }
+
+              function submitOther() {
+                var email = document.getElementById('otherEmail').value.trim().toLowerCase();
+                var errDiv = document.getElementById('err');
+                if (!email) {
+                  errDiv.style.display = 'block';
+                  errDiv.innerText = 'Vui lòng nhập email Google.';
+                  return;
+                }
+                if (email !== 'dinhanh1994@gmail.com') {
+                  errDiv.style.display = 'block';
+                  errDiv.innerText = 'TRUY CẬP BỊ TỪ CHỐI: chỉ tài khoản dinhanh1994@gmail.com mới có quyền quản trị.';
+                  return;
+                }
+                selectAccount(email);
+              }
             </script>
           </body>
           </html>
@@ -298,7 +319,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
     }
   };
 
-  // Confirm Google Account in Google authentication window
+  // Direct In-Modal Google Sign-In & Automatic Redirect to Ctrl C Admin
   const handleVerifyGoogleAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -349,6 +370,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
         };
       }
 
+      // Automatically redirect to Ctrl C Admin Dashboard
       onLoginSuccess(authenticatedUser);
       onClose();
     } catch (err: any) {
