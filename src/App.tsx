@@ -63,10 +63,22 @@ export default function App() {
   useEffect(() => {
     fetchConfig();
 
-    // Check if path or hash includes /admin
-    if (window.location.pathname.includes('/admin') || window.location.hash.includes('admin')) {
-      setIsAdminLoginModalOpen(true);
-    }
+    const checkAdminUrl = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (path === '/admin' || path.endsWith('/admin') || path.includes('/admin/') || hash.includes('admin')) {
+        setIsAdminLoginModalOpen(true);
+      }
+    };
+
+    checkAdminUrl();
+    window.addEventListener('popstate', checkAdminUrl);
+    window.addEventListener('hashchange', checkAdminUrl);
+
+    return () => {
+      window.removeEventListener('popstate', checkAdminUrl);
+      window.removeEventListener('hashchange', checkAdminUrl);
+    };
   }, []);
 
   useEffect(() => {
