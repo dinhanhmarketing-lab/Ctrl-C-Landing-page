@@ -83,12 +83,23 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
     }
   };
 
-  // Launch Google Sign-In Popup flow
+  // Launch Google Sign-In Popup flow & open Google Accounts page
   const handleOpenGoogleAuthPopup = () => {
     setErrorMsg('');
     setGoogleAuthEmail('');
     setGoogleAuthPassword('');
     setGooglePopupActive(true);
+
+    try {
+      // Attempt to open official Google Accounts Sign-In portal in popup
+      window.open(
+        'https://accounts.google.com/AccountChooser?service=lso&continue=https://accounts.google.com',
+        'GoogleSignInWindow',
+        'width=520,height=620,top=120,left=240,resizable=yes,scrollbars=yes'
+      );
+    } catch (e) {
+      console.warn('Popup window blocked or not supported:', e);
+    }
   };
 
   // Confirm Google Account in Google authentication window
