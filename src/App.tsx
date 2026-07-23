@@ -34,7 +34,8 @@ export default function App() {
   const fetchConfig = async () => {
     try {
       const res = await fetch('/api/config');
-      if (res.ok) {
+      const ct = res.headers.get('content-type');
+      if (res.ok && ct && ct.includes('application/json')) {
         const data = await res.json();
         if (data.config) setConfig(data.config);
         if (data.packages) setPackages(data.packages);
@@ -51,7 +52,8 @@ export default function App() {
 
     try {
       const res = await fetch(`/api/orders?adminEmail=${encodeURIComponent(adminEmail)}`);
-      if (res.ok) {
+      const ct = res.headers.get('content-type');
+      if (res.ok && ct && ct.includes('application/json')) {
         const data = await res.json();
         if (data.orders) setOrders(data.orders);
       }
