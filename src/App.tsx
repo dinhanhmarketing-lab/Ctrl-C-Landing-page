@@ -23,7 +23,37 @@ export default function App() {
   const [config, setConfig] = useState<AppConfig>(defaultConfig);
   const [packages, setPackages] = useState<PackageTier[]>(defaultPackages);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    try {
+      const saved = localStorage.getItem('ctrlc_admin_user');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.email && parsed.isAdmin) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse saved user from localStorage', e);
+    }
+    return null;
+  });
+
+  // Sync user state to localStorage whenever it changes
+  useEffect(() => {
+    if (user) {
+      try {
+        localStorage.setItem('ctrlc_admin_user', JSON.stringify(user));
+      } catch (e) {
+        console.error('Failed to save user to localStorage', e);
+      }
+    } else {
+      try {
+        localStorage.removeItem('ctrlc_admin_user');
+      } catch (e) {
+        console.error('Failed to remove user from localStorage', e);
+      }
+    }
+  }, [user]);
 
   // Modals & Active Tab
   const [isChapterModalOpen, setIsChapterModalOpen] = useState(false);
