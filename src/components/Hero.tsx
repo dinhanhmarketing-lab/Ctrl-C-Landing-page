@@ -22,7 +22,7 @@ export const Hero: React.FC<HeroProps> = ({
   return (
     <section className="relative min-h-[85vh] md:min-h-[90vh] flex flex-col justify-end overflow-hidden border-b-2 border-[#514532] bg-[#131313]">
       {/* Background Image with Editable Image */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0">
         <EditableImage
           src={heroData.bgImage}
           onChange={(newSrc) => onUpdateHeroField?.('bgImage', newSrc)}

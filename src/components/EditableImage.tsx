@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Plus, Image as ImageIcon, Upload, Link as LinkIcon, X } from 'lucide-react';
 
 interface EditableImageProps {
@@ -22,7 +23,12 @@ export const EditableImage: React.FC<EditableImageProps> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [urlInput, setUrlInput] = useState('');
+  const [mounted, setMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (!isAdmin) {
     return <img src={src} alt={alt} className={className} style={style} />;
@@ -55,6 +61,79 @@ export const EditableImage: React.FC<EditableImageProps> = ({
     }
   };
 
+  const modalContent = showModal ? (
+    <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fadeIn pointer-events-auto">
+      <div className="bg-[#1c1b1b] border-2 border-[#ffb800] p-6 max-w-md w-full shadow-2xl relative text-white font-label-mono text-sm z-[1000000] my-auto">
+        <button
+          type="button"
+          onClick={() => setShowModal(false)}
+          className="absolute top-3 right-3 text-[#d5c4ab] hover:text-[#ffb800] p-1 cursor-pointer"
+        >
+          <X size={18} />
+        </button>
+
+        <div className="flex items-center gap-2 text-[#ffb800] font-bold text-base mb-4 uppercase">
+          <ImageIcon size={20} />
+          <span>CẬP NHẬT HÌNH ẢNH</span>
+        </div>
+
+        {/* Current Image Preview */}
+        <div className="mb-4 bg-black/50 p-2 border border-[#353535] flex justify-center">
+          <img src={src} alt="Preview" className="max-h-36 object-contain rounded" />
+        </div>
+
+        <div className="space-y-4">
+          {/* File Upload Option */}
+          <div>
+            <label className="block text-xs font-bold text-[#d5c4ab] mb-2 uppercase">
+              1. TẢI ẢNH TỪ MÁY TÍNH (+):
+            </label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full bg-[#ffb800] text-black py-2.5 px-4 font-bold uppercase hover:bg-white transition-colors flex items-center justify-center gap-2 cursor-pointer border border-black shadow-lg"
+            >
+              <Upload size={16} />
+              <span>CHỌN FILE HÌNH ẢNH (...)</span>
+            </button>
+          </div>
+
+          <div className="text-center text-xs text-[#888] font-bold uppercase">- HOẶC -</div>
+
+          {/* URL Option */}
+          <form onSubmit={handleUrlSubmit}>
+            <label className="block text-xs font-bold text-[#d5c4ab] mb-1.5 uppercase">
+              2. NHẬP LINK HÌNH ẢNH (URL):
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                placeholder="https://example.com/image.png"
+                className="flex-1 bg-[#131313] border border-[#514532] p-2 text-xs text-white focus:border-[#ffb800] focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="bg-[#ffb800] text-black px-4 font-bold text-xs uppercase hover:bg-white transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                <LinkIcon size={14} />
+                <span>ÁP DỤNG</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <div className={`relative group/editable-img ${containerClassName}`}>
       <img src={src} alt={alt} className={className} style={style} />
@@ -72,78 +151,8 @@ export const EditableImage: React.FC<EditableImageProps> = ({
         </span>
       </div>
 
-      {/* Modal / Options Popup */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-[#1c1b1b] border-2 border-[#ffb800] p-6 max-w-md w-full shadow-2xl relative text-white font-label-mono text-sm">
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-3 right-3 text-[#d5c4ab] hover:text-[#ffb800] p-1 cursor-pointer"
-            >
-              <X size={18} />
-            </button>
-
-            <div className="flex items-center gap-2 text-[#ffb800] font-bold text-base mb-4 uppercase">
-              <ImageIcon size={20} />
-              <span>CẬP NHẬT HÌNH ẢNH</span>
-            </div>
-
-            {/* Current Image Preview */}
-            <div className="mb-4 bg-black/50 p-2 border border-[#353535] flex justify-center">
-              <img src={src} alt="Preview" className="max-h-36 object-contain rounded" />
-            </div>
-
-            <div className="space-y-4">
-              {/* File Upload Option */}
-              <div>
-                <label className="block text-xs font-bold text-[#d5c4ab] mb-2 uppercase">
-                  1. TẢI ẢNH TỪ MÁY TÍNH (+):
-                </label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full bg-[#ffb800] text-black py-2.5 px-4 font-bold uppercase hover:bg-white transition-colors flex items-center justify-center gap-2 cursor-pointer border border-black"
-                >
-                  <Upload size={16} />
-                  <span>CHỌN FILE HÌNH ẢNH (...)</span>
-                </button>
-              </div>
-
-              <div className="text-center text-xs text-[#888] font-bold uppercase">- HOẶC -</div>
-
-              {/* URL Option */}
-              <form onSubmit={handleUrlSubmit}>
-                <label className="block text-xs font-bold text-[#d5c4ab] mb-1.5 uppercase">
-                  2. NHẬP LINK HÌNH ẢNH (URL):
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    value={urlInput}
-                    onChange={(e) => setUrlInput(e.target.value)}
-                    placeholder="https://example.com/image.png"
-                    className="flex-1 bg-[#131313] border border-[#514532] p-2 text-xs text-white focus:border-[#ffb800] focus:outline-none"
-                  />
-                  <button
-                    type="submit"
-                    className="bg-[#ffb800] text-black px-4 font-bold text-xs uppercase hover:bg-white transition-colors flex items-center gap-1 cursor-pointer"
-                  >
-                    <LinkIcon size={14} />
-                    <span>ÁP DỤNG</span>
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal / Options Popup rendered via Portal to document.body */}
+      {mounted && modalContent && createPortal(modalContent, document.body)}
     </div>
   );
 };
