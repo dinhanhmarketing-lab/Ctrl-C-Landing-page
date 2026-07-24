@@ -1,17 +1,47 @@
 import React from 'react';
+import { AppConfig } from '../types';
+import { EditableText } from './EditableText';
 
 interface TickerSectionProps {
   messages: string[];
   primaryColor: string;
+  isAdmin?: boolean;
+  onUpdateTickerMessage?: (index: number, val: string) => void;
 }
 
 export const TickerSection: React.FC<TickerSectionProps> = ({
   messages,
   primaryColor,
+  isAdmin = false,
+  onUpdateTickerMessage,
 }) => {
   if (!messages || messages.length === 0) return null;
 
-  // Duplicate list to create smooth infinite loop
+  if (isAdmin) {
+    return (
+      <section
+        className="bg-[#ffb800] py-3.5 border-b-2 border-black overflow-x-auto shadow-inner px-4 text-black font-label-mono text-sm"
+        style={{ backgroundColor: primaryColor }}
+      >
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-4">
+          <span className="font-extrabold uppercase bg-black text-white px-2 py-0.5 text-xs">
+            CHỈNH SỬA TICKER CHẠY:
+          </span>
+          {messages.map((msg, idx) => (
+            <div key={idx} className="flex items-center gap-1 bg-black/10 p-1 border border-black/30 rounded">
+              <span className="font-bold">#{idx + 1}:</span>
+              <EditableText
+                value={msg}
+                onChange={(val) => onUpdateTickerMessage?.(idx, val)}
+                isAdmin={true}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   const duplicated = [...messages, ...messages, ...messages];
 
   return (

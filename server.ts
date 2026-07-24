@@ -101,6 +101,13 @@ function saveConfig() {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(appConfig, null, 2));
+
+    // Persist directly into src/data/defaultConfig.ts code file
+    const defaultConfigPath = path.join(process.cwd(), 'src', 'data', 'defaultConfig.ts');
+    if (fs.existsSync(defaultConfigPath)) {
+      const fileContent = `import { AppConfig, PackageTier } from '../types';\n\nexport const defaultConfig: AppConfig = ${JSON.stringify(appConfig, null, 2)};\n\nexport const defaultPackages: PackageTier[] = ${JSON.stringify(packages, null, 2)};\n`;
+      fs.writeFileSync(defaultConfigPath, fileContent, 'utf-8');
+    }
   } catch (err) {
     console.error('Error writing config file:', err);
   }

@@ -1,16 +1,21 @@
 import React from 'react';
 import { BookOpen, Sparkles } from 'lucide-react';
 import { AppConfig } from '../types';
+import { EditableText } from './EditableText';
 
 interface PreviewSectionProps {
   previewData: AppConfig['preview'];
   primaryColor: string;
+  isAdmin?: boolean;
+  onUpdatePreviewField?: (field: keyof AppConfig['preview'], value: string) => void;
   onOpenChapterModal: () => void;
 }
 
 export const PreviewSection: React.FC<PreviewSectionProps> = ({
   previewData,
   primaryColor,
+  isAdmin = false,
+  onUpdatePreviewField,
   onOpenChapterModal,
 }) => {
   return (
@@ -31,14 +36,32 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
           </div>
 
           <h2 className="font-headline-lg text-4xl md:text-5xl uppercase mb-6 text-black tracking-tight font-extrabold">
-            {previewData.title}
+            <EditableText
+              value={previewData.title}
+              onChange={(val) => onUpdatePreviewField?.('title', val)}
+              isAdmin={isAdmin}
+            />
           </h2>
 
           <div className="space-y-5 text-black font-body-md leading-relaxed text-lg sm:text-xl">
-            <p className="first-letter:text-6xl first-letter:font-extrabold first-letter:mr-3 first-letter:float-left first-letter:text-black first-letter:font-headline-lg">
-              {previewData.p1}
-            </p>
-            <p className="text-black/90 font-medium">{previewData.p2}</p>
+            <div className="first-letter:text-6xl first-letter:font-extrabold first-letter:mr-3 first-letter:float-left first-letter:text-black first-letter:font-headline-lg">
+              <EditableText
+                value={previewData.p1}
+                onChange={(val) => onUpdatePreviewField?.('p1', val)}
+                isAdmin={isAdmin}
+                isMultiline={true}
+                tagName="p"
+              />
+            </div>
+            <div className="text-black/90 font-medium">
+              <EditableText
+                value={previewData.p2}
+                onChange={(val) => onUpdatePreviewField?.('p2', val)}
+                isAdmin={isAdmin}
+                isMultiline={true}
+                tagName="p"
+              />
+            </div>
           </div>
 
           <div className="mt-8 pt-4 border-t-2 border-black/10 flex flex-wrap items-center justify-between gap-4">
@@ -47,7 +70,11 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
               className="bg-black text-white font-label-mono px-10 py-4 font-bold text-sm tracking-wider uppercase hover:bg-[#ffb800] hover:text-black transition-all flex items-center gap-3 border-2 border-black brutalist-border cursor-pointer active:scale-98"
             >
               <BookOpen size={18} />
-              <span>{previewData.readButtonText}</span>
+              <EditableText
+                value={previewData.readButtonText || 'Đọc thử'}
+                onChange={(val) => onUpdatePreviewField?.('readButtonText', val)}
+                isAdmin={isAdmin}
+              />
             </button>
 
             <span className="font-label-mono text-xs text-black/60 uppercase">

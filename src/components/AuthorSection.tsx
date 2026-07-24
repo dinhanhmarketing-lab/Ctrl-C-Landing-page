@@ -1,15 +1,21 @@
 import React from 'react';
 import { UserCheck } from 'lucide-react';
 import { AppConfig } from '../types';
+import { EditableText } from './EditableText';
+import { EditableImage } from './EditableImage';
 
 interface AuthorSectionProps {
   authorData: AppConfig['author'];
   primaryColor: string;
+  isAdmin?: boolean;
+  onUpdateAuthorField?: (field: keyof AppConfig['author'], value: string) => void;
 }
 
 export const AuthorSection: React.FC<AuthorSectionProps> = ({
   authorData,
   primaryColor,
+  isAdmin = false,
+  onUpdateAuthorField,
 }) => {
   return (
     <section
@@ -17,19 +23,26 @@ export const AuthorSection: React.FC<AuthorSectionProps> = ({
       id="author"
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-12">
-        {/* Author Portrait */}
+        {/* Author Portrait with Editable Image */}
         <div className="w-full md:w-1/2 relative">
           <div className="aspect-square bg-[#20201f] border-4 border-[#ffb800] relative overflow-hidden group brutalist-border-gold">
-            <img
-              className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-105"
+            <EditableImage
               src={authorData.image}
+              onChange={(newSrc) => onUpdateAuthorField?.('image', newSrc)}
+              isAdmin={isAdmin}
               alt={authorData.name}
+              className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-105"
+              containerClassName="w-full h-full"
             />
             <div
-              className="absolute bottom-0 left-0 bg-[#ffb800] text-black px-4 py-2 font-label-mono font-bold text-xs uppercase border-t-2 border-r-2 border-black"
+              className="absolute bottom-0 left-0 bg-[#ffb800] text-black px-4 py-2 font-label-mono font-bold text-xs uppercase border-t-2 border-r-2 border-black z-10"
               style={{ backgroundColor: primaryColor }}
             >
-              {authorData.tag || `AUTHOR_ID: ${authorData.name}`}
+              <EditableText
+                value={authorData.tag || `AUTHOR_ID: ${authorData.name}`}
+                onChange={(val) => onUpdateAuthorField?.('tag', val)}
+                isAdmin={isAdmin}
+              />
             </div>
           </div>
         </div>
@@ -44,16 +57,30 @@ export const AuthorSection: React.FC<AuthorSectionProps> = ({
           </div>
 
           <h2 className="font-headline-lg text-4xl sm:text-5xl uppercase font-bold text-white tracking-tight">
-            {authorData.title}
+            <EditableText
+              value={authorData.title}
+              onChange={(val) => onUpdateAuthorField?.('title', val)}
+              isAdmin={isAdmin}
+            />
           </h2>
 
           <h3 className="font-headline-lg text-2xl text-[#ffb800] uppercase tracking-wide font-bold" style={{ color: primaryColor }}>
-            {authorData.name}
+            <EditableText
+              value={authorData.name}
+              onChange={(val) => onUpdateAuthorField?.('name', val)}
+              isAdmin={isAdmin}
+            />
           </h3>
 
-          <p className="text-[#d5c4ab] text-lg sm:text-xl font-body-md leading-relaxed font-light">
-            {authorData.bio}
-          </p>
+          <div className="text-[#d5c4ab] text-lg sm:text-xl font-body-md leading-relaxed font-light">
+            <EditableText
+              value={authorData.bio}
+              onChange={(val) => onUpdateAuthorField?.('bio', val)}
+              isAdmin={isAdmin}
+              isMultiline={true}
+              tagName="p"
+            />
+          </div>
 
           <div className="flex gap-4 items-center pt-4">
             <div

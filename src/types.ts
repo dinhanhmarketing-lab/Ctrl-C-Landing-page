@@ -57,6 +57,15 @@ export interface AppConfig {
   bgColor: string;
   surfaceColor: string;
   title: string;
+
+  navigation?: {
+    story: string;
+    character: string;
+    archive: string;
+    order: string;
+    readTrialButton: string;
+    readNowButton: string;
+  };
   
   hero: {
     statusTag: string;

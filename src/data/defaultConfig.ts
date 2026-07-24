@@ -6,12 +6,20 @@ export const defaultConfig: AppConfig = {
   bgColor: '#131313',
   surfaceColor: '#20201f',
   title: 'CTRL C',
+  navigation: {
+    story: 'STORY',
+    character: 'CHARACTER',
+    archive: 'ARCHIVE',
+    order: 'ORDER',
+    readTrialButton: 'ĐỌC THỬ',
+    readNowButton: 'READ NOW',
+  },
 
   hero: {
     statusTag: 'SYSTEM_STATUS: OVERRIDE',
     headlinePart1: 'CTRL',
     headlinePart2: 'C',
-    headlinePart3: 'IS THE NEW END.',
+    headlinePart3: '',
     subText: 'A cyber-brutalist descent into the architecture of consciousness. In a world of digital replication, the original is the most dangerous artifact.',
     bgImage: 'https://lh3.googleusercontent.com/aida/AP1WRLvvubOhSTNL-h9xGJV8hUOlWbrtfdvbyRbb8DFJ8YtRhRg4WnLpyYywsHTWkwsd-2gCyoTFI1oGDsnHtzo3df1ps-FAcpiiQENI4oJ7oYpozEtQXgkjSYM7QIqzD9AdZ3L7sCh9oaBc0wBdHLbk5eHM2ocRW-uRLgu-egHwxmM93l-SPio8VUFf7SA9jwNaNeSIbaOvosVp8bRexKFZil8qgzss15e92gch-4tnhp7mqotJEOpdKW-dAA',
     button1Text: 'MUA NGAY',

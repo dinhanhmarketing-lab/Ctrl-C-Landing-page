@@ -1,17 +1,24 @@
 import React from 'react';
-import { ExternalLink, Link2, Globe, Camera, X as XIcon } from 'lucide-react';
+import { Link2 } from 'lucide-react';
 import { AppConfig } from '../types';
+import { EditableText } from './EditableText';
 
 interface FooterSectionProps {
   footerData: AppConfig['footer'];
   title: string;
   primaryColor: string;
+  isAdmin?: boolean;
+  onUpdateFooterField?: (field: keyof AppConfig['footer'], value: string) => void;
+  onUpdateTitle?: (newTitle: string) => void;
 }
 
 export const FooterSection: React.FC<FooterSectionProps> = ({
   footerData,
   title,
   primaryColor,
+  isAdmin = false,
+  onUpdateFooterField,
+  onUpdateTitle,
 }) => {
   return (
     <footer
@@ -22,13 +29,41 @@ export const FooterSection: React.FC<FooterSectionProps> = ({
         {/* Col 1: Metadata */}
         <div className="space-y-4">
           <div className="font-headline-lg text-4xl font-extrabold tracking-tighter uppercase">
-            {title}
+            <EditableText
+              value={title}
+              onChange={(val) => onUpdateTitle?.(val)}
+              isAdmin={isAdmin}
+            />
           </div>
           <div className="font-label-mono text-xs space-y-1.5 font-medium">
-            <p>{footerData.publicationId}</p>
-            <p>{footerData.isbn}</p>
-            <p>{footerData.publisher}</p>
-            <p className="pt-2 font-bold">{footerData.copyright}</p>
+            <p>
+              <EditableText
+                value={footerData.publicationId}
+                onChange={(val) => onUpdateFooterField?.('publicationId', val)}
+                isAdmin={isAdmin}
+              />
+            </p>
+            <p>
+              <EditableText
+                value={footerData.isbn}
+                onChange={(val) => onUpdateFooterField?.('isbn', val)}
+                isAdmin={isAdmin}
+              />
+            </p>
+            <p>
+              <EditableText
+                value={footerData.publisher}
+                onChange={(val) => onUpdateFooterField?.('publisher', val)}
+                isAdmin={isAdmin}
+              />
+            </p>
+            <p className="pt-2 font-bold">
+              <EditableText
+                value={footerData.copyright}
+                onChange={(val) => onUpdateFooterField?.('copyright', val)}
+                isAdmin={isAdmin}
+              />
+            </p>
           </div>
         </div>
 
@@ -98,10 +133,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({
               PRIVACY
             </a>
             <a href="#" className="font-label-mono text-[10px] uppercase font-bold text-black/70 hover:text-white">
-              TERMINAL
-            </a>
-            <a href="#order" className="font-label-mono text-[10px] uppercase font-bold text-black/70 hover:text-white">
-              CONTACT
+              TERMS
             </a>
           </div>
         </div>

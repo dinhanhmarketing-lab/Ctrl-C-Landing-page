@@ -1,5 +1,5 @@
-import React from 'react';
-import { Settings, ShoppingBag, Eye, LogOut, FileSpreadsheet, Palette, ArrowUpDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { Settings, ShoppingBag, Eye, LogOut, FileSpreadsheet, Palette, Save, Check } from 'lucide-react';
 import { AuthUser } from '../types';
 
 interface AdminBarProps {
@@ -7,7 +7,9 @@ interface AdminBarProps {
   activeTab: 'preview' | 'orders' | 'content' | 'theme' | 'images' | 'sheets';
   setActiveTab: (tab: 'preview' | 'orders' | 'content' | 'theme' | 'images' | 'sheets') => void;
   onLogout: () => void;
+  onSaveAll?: () => Promise<void>;
   orderCount: number;
+  hasChanges?: boolean;
 }
 
 export const AdminBar: React.FC<AdminBarProps> = ({
@@ -15,8 +17,27 @@ export const AdminBar: React.FC<AdminBarProps> = ({
   activeTab,
   setActiveTab,
   onLogout,
+  onSaveAll,
   orderCount,
+  hasChanges = false,
 }) => {
+  const [isSaving, setIsSaving] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
+
+  const handleSave = async () => {
+    if (!onSaveAll) return;
+    setIsSaving(true);
+    try {
+      await onSaveAll();
+      setJustSaved(true);
+      setTimeout(() => setJustSaved(false), 2500);
+    } catch (e) {
+      console.error('Save failed', e);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="bg-black text-white border-b-2 border-[#ffb800] px-4 py-2 sticky top-0 z-50 shadow-lg font-label-mono text-xs">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
@@ -25,6 +46,34 @@ export const AdminBar: React.FC<AdminBarProps> = ({
             ADMIN LOGGED IN
           </span>
           <span className="text-[#ffdca1] font-bold hidden sm:inline">{user.email}</span>
+        </div>
+
+        {/* Big Save Button */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className={`px-4 py-1.5 font-extrabold uppercase flex items-center gap-2 transition-all cursor-pointer border-2 border-black brutalist-border ${
+              justSaved
+                ? 'bg-emerald-500 text-black border-white'
+                : 'bg-[#ffb800] text-black hover:bg-white animate-pulse'
+            }`}
+            title="Lưu tất cả thay đổi đè trực tiếp lên code hệ thống"
+          >
+            {justSaved ? (
+              <>
+                <Check size={16} className="stroke-[3]" />
+                <span>ĐÃ LƯU VÀO CODE!</span>
+              </>
+            ) : isSaving ? (
+              <span>ĐANG LƯU...</span>
+            ) : (
+              <>
+                <Save size={16} className="stroke-[2.5]" />
+                <span>LƯU TẤT CẢ THAY ĐỔI</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Navigation Tabs */}

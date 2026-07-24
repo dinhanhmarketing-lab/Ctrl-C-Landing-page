@@ -16,7 +16,7 @@ import { AdminBar } from './components/AdminBar';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { AdminDashboard } from './components/AdminDashboard';
 
-import { AppConfig, AuthUser, Order, PackageTier } from './types';
+import { AppConfig, AuthUser, Order, PackageTier, CustomerReview, RewardItem, LogisticsItem } from './types';
 import { defaultConfig, defaultPackages } from './data/defaultConfig';
 
 export default function App() {
@@ -99,7 +99,7 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           newConfig,
-          newPackages,
+          newPackages: newPackages || packages,
           adminEmail,
         }),
       });
@@ -117,6 +117,145 @@ export default function App() {
     // Direct update to local application state
     setConfig(newConfig);
     if (newPackages) setPackages(newPackages);
+  };
+
+  // Helper update state functions for inline UI editing
+  const updateTitle = (newTitle: string) => {
+    setConfig((prev) => ({ ...prev, title: newTitle }));
+  };
+
+  const updateNav = (field: keyof Required<AppConfig>['navigation'], value: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      navigation: {
+        story: prev.navigation?.story || 'STORY',
+        character: prev.navigation?.character || 'CHARACTER',
+        archive: prev.navigation?.archive || 'ARCHIVE',
+        order: prev.navigation?.order || 'ORDER',
+        readTrialButton: prev.navigation?.readTrialButton || 'ĐỌC THỬ',
+        readNowButton: prev.navigation?.readNowButton || 'READ NOW',
+        [field]: value,
+      },
+    }));
+  };
+
+  const updateHeroField = (field: keyof AppConfig['hero'], value: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      hero: { ...prev.hero, [field]: value },
+    }));
+  };
+
+  const updatePreviewField = (field: keyof AppConfig['preview'], value: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      preview: { ...prev.preview, [field]: value },
+    }));
+  };
+
+  const updateAuthorField = (field: keyof AppConfig['author'], value: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      author: { ...prev.author, [field]: value },
+    }));
+  };
+
+  const updatePressTitle = (title: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      press: { ...prev.press, sectionTitle: title },
+    }));
+  };
+
+  const updatePressQuote = (index: number, quote: string, source: string) => {
+    setConfig((prev) => {
+      const newQuotes = [...prev.press.quotes];
+      if (newQuotes[index]) {
+        newQuotes[index] = { ...newQuotes[index], quote, source };
+      }
+      return { ...prev, press: { ...prev.press, quotes: newQuotes } };
+    });
+  };
+
+  const updateTickerMessage = (index: number, val: string) => {
+    setConfig((prev) => {
+      const msgs = [...(prev.ticker?.messages || [])];
+      msgs[index] = val;
+      return { ...prev, ticker: { ...prev.ticker, messages: msgs } };
+    });
+  };
+
+  const updateRewardsTitle = (title: string) => {
+    setConfig((prev) => ({ ...prev, rewards: { ...prev.rewards, sectionTitle: title } }));
+  };
+
+  const updateRewardItem = (index: number, updated: Partial<RewardItem>) => {
+    setConfig((prev) => {
+      const items = [...prev.rewards.items];
+      if (items[index]) {
+        items[index] = { ...items[index], ...updated };
+      }
+      return { ...prev, rewards: { ...prev.rewards, items } };
+    });
+  };
+
+  const updateLogisticsTitle = (title: string) => {
+    setConfig((prev) => ({ ...prev, logistics: { ...prev.logistics, sectionTitle: title } }));
+  };
+
+  const updateLogisticsItem = (index: number, updated: Partial<LogisticsItem>) => {
+    setConfig((prev) => {
+      const items = [...prev.logistics.items];
+      if (items[index]) {
+        items[index] = { ...items[index], ...updated };
+      }
+      return { ...prev, logistics: { ...prev.logistics, items } };
+    });
+  };
+
+  const updateGalleryTitle = (title: string) => {
+    setConfig((prev) => ({ ...prev, gallery: { ...prev.gallery, sectionTitle: title } }));
+  };
+
+  const updateGalleryImage = (index: number, newUrl: string) => {
+    setConfig((prev) => {
+      const imgs = [...prev.gallery.images];
+      if (imgs[index]) {
+        imgs[index] = { ...imgs[index], url: newUrl };
+      }
+      return { ...prev, gallery: { ...prev.gallery, images: imgs } };
+    });
+  };
+
+  const updateGalleryAlt = (index: number, newAlt: string) => {
+    setConfig((prev) => {
+      const imgs = [...prev.gallery.images];
+      if (imgs[index]) {
+        imgs[index] = { ...imgs[index], alt: newAlt };
+      }
+      return { ...prev, gallery: { ...prev.gallery, images: imgs } };
+    });
+  };
+
+  const updateReviewsTitle = (title: string) => {
+    setConfig((prev) => ({ ...prev, reviews: { ...prev.reviews, sectionTitle: title } }));
+  };
+
+  const updateReviewItem = (index: number, updated: Partial<CustomerReview>) => {
+    setConfig((prev) => {
+      const items = [...prev.reviews.items];
+      if (items[index]) {
+        items[index] = { ...items[index], ...updated };
+      }
+      return { ...prev, reviews: { ...prev.reviews, items } };
+    });
+  };
+
+  const updateFooterField = (field: keyof AppConfig['footer'], value: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      footer: { ...prev.footer, [field]: value },
+    }));
   };
 
   // Handler for resetting config to default
@@ -171,6 +310,8 @@ export default function App() {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const isAdmin = !!user?.isAdmin;
+
   // Section Component Map
   const renderSection = (secKey: string) => {
     if (config.enabledSections && config.enabledSections[secKey] === false) {
@@ -184,6 +325,8 @@ export default function App() {
             key="hero"
             heroData={config.hero}
             primaryColor={config.primaryColor}
+            isAdmin={isAdmin}
+            onUpdateHeroField={updateHeroField}
             onOpenOrder={scrollToOrder}
             onOpenChapterModal={() => setIsChapterModalOpen(true)}
           />
@@ -194,6 +337,8 @@ export default function App() {
             key="preview"
             previewData={config.preview}
             primaryColor={config.primaryColor}
+            isAdmin={isAdmin}
+            onUpdatePreviewField={updatePreviewField}
             onOpenChapterModal={() => setIsChapterModalOpen(true)}
           />
         );
@@ -203,6 +348,8 @@ export default function App() {
             key="author"
             authorData={config.author}
             primaryColor={config.primaryColor}
+            isAdmin={isAdmin}
+            onUpdateAuthorField={updateAuthorField}
           />
         );
       case 'press':
@@ -211,6 +358,9 @@ export default function App() {
             key="press"
             pressData={config.press}
             primaryColor={config.primaryColor}
+            isAdmin={isAdmin}
+            onUpdatePressTitle={updatePressTitle}
+            onUpdatePressQuote={updatePressQuote}
           />
         );
       case 'ticker':
@@ -219,6 +369,8 @@ export default function App() {
             key="ticker"
             messages={config.ticker?.messages || []}
             primaryColor={config.primaryColor}
+            isAdmin={isAdmin}
+            onUpdateTickerMessage={updateTickerMessage}
           />
         );
       case 'rewards':
@@ -227,6 +379,9 @@ export default function App() {
             key="rewards"
             rewardsData={config.rewards}
             primaryColor={config.primaryColor}
+            isAdmin={isAdmin}
+            onUpdateRewardsTitle={updateRewardsTitle}
+            onUpdateRewardItem={updateRewardItem}
           />
         );
       case 'checkout':
@@ -246,6 +401,9 @@ export default function App() {
             key="logistics"
             logisticsData={config.logistics}
             primaryColor={config.primaryColor}
+            isAdmin={isAdmin}
+            onUpdateLogisticsTitle={updateLogisticsTitle}
+            onUpdateLogisticsItem={updateLogisticsItem}
           />
         );
       case 'gallery':
@@ -254,6 +412,10 @@ export default function App() {
             key="gallery"
             galleryData={config.gallery}
             primaryColor={config.primaryColor}
+            isAdmin={isAdmin}
+            onUpdateGalleryTitle={updateGalleryTitle}
+            onUpdateGalleryImage={updateGalleryImage}
+            onUpdateGalleryAlt={updateGalleryAlt}
           />
         );
       case 'reviews':
@@ -262,6 +424,9 @@ export default function App() {
             key="reviews"
             reviewsData={config.reviews}
             primaryColor={config.primaryColor}
+            isAdmin={isAdmin}
+            onUpdateReviewsTitle={updateReviewsTitle}
+            onUpdateReviewItem={updateReviewItem}
           />
         );
       case 'footer':
@@ -271,6 +436,9 @@ export default function App() {
             footerData={config.footer}
             title={config.title}
             primaryColor={config.primaryColor}
+            isAdmin={isAdmin}
+            onUpdateFooterField={updateFooterField}
+            onUpdateTitle={updateTitle}
           />
         );
       default:
@@ -287,6 +455,7 @@ export default function App() {
           activeTab={adminTab}
           setActiveTab={setAdminTab}
           onLogout={() => setUser(null)}
+          onSaveAll={() => handleSaveConfig(config, packages)}
           orderCount={orders.filter((o) => o.status === 'pending').length}
         />
       )}
@@ -294,8 +463,11 @@ export default function App() {
       {/* Main Website Navigation */}
       <Navbar
         title={config.title}
+        navigation={config.navigation}
         primaryColor={config.primaryColor}
         user={user}
+        onUpdateTitle={updateTitle}
+        onUpdateNav={updateNav}
         onOpenAdmin={() => setIsAdminLoginModalOpen(true)}
         onOpenChapterModal={() => setIsChapterModalOpen(true)}
         onOpenOrder={scrollToOrder}
@@ -317,7 +489,7 @@ export default function App() {
           onRefreshOrders={fetchOrders}
         />
       ) : (
-        /* Public Landing Page Render */
+        /* Public Landing Page Render with inline visual editing enabled */
         <main>{(config.sectionOrder || []).map((secKey) => renderSection(secKey))}</main>
       )}
 
@@ -336,7 +508,7 @@ export default function App() {
         onClose={() => setIsAdminLoginModalOpen(false)}
         onLoginSuccess={(loggedUser) => {
           setUser(loggedUser);
-          setAdminTab('orders');
+          setAdminTab('preview');
         }}
         primaryColor={config.primaryColor}
       />
